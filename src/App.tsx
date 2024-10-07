@@ -1,8 +1,14 @@
 import './App.css';
+import HomePage from './layouts/HomePage/HomePage';
+import Footer from './layouts/NavbarAndFooter/Footer';
 import Navbar from './layouts/NavbarAndFooter/Navbar';
 
 export default function App() {
   return (
-    <Navbar />
+    <div>
+      <Navbar />
+        <HomePage />
+      <Footer />
+    </div>
   );
 }
