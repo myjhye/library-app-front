@@ -26,6 +26,8 @@ export default function SearchBooksPage() {
     const [search, setSearch] = useState('');
     // 사용자가 입력한 검색어에 따른 API 요청 URL 
     const [searchUrl, setSearchUrl] = useState('');
+    // 선택된 도서 카테고리
+    const [categorySelection, setCategorySelection] = useState('도서 카테고리');
 
     useEffect(() => {
         const fetchBooks = async () => {
@@ -37,9 +39,11 @@ export default function SearchBooksPage() {
                 url = `${baseUrl}?page=${currentPage - 1}&size=${booksPerPage}`;
             }
             // 검색어가 있을 경우, 검색어와 페이지 정보 추가
-            // http://localhost:8080/api/books + /search/findByTitleContaining?title=${search}&page=0&size=${booksPerPage}
+            // http://localhost:8080/api/books + /search/findByTitleContaining?title=${search}&page=<pageNumber>&size=${booksPerPage}
             else {
-                url = baseUrl + searchUrl;
+                // searchUrl의 <pageNumber>를 ${currentPage - 1}로 대체
+                let searchWithPage = searchUrl.replace('<pageNumber>', `${currentPage - 1}`)
+                url = baseUrl + searchWithPage;
             }
 
             //* 비동기 데이터 요청
@@ -107,12 +111,31 @@ export default function SearchBooksPage() {
 
     //* 검색 버튼 클릭 함수 (검색어에 따라 searchUrl 업데이트)
     const searchHandleChange = () => {
+        // 검색 때마다 현재 페이지를 1로 초기화
+        setCurrentPage(1);
+
         if (search === '') {
             setSearchUrl('');
         }
         else {
-            setSearchUrl(`/search/findByTitleContaining?title=${search}&page=0&size=${booksPerPage}`)
+            setSearchUrl(`/search/findByTitleContaining?title=${search}&page=<pageNumber>&size=${booksPerPage}`)
         }
+        setCategorySelection('도서 카테고리')
+    }
+
+    //* 카테고리 버튼 클릭 함수 (카테고리에 따라 categorySelection 업데이트)
+    const categoryField = (value: string) => {
+        setCurrentPage(1);
+
+        if (value.toLowerCase() === 'fe' || value.toLowerCase() === 'be' || value.toLowerCase() === 'data' || value.toLowerCase() === 'devops' ) {
+            setCategorySelection(value);
+            setSearchUrl(`/search/findByCategory?category=${value}&page=<pageNumber>&size=${booksPerPage}`);
+        }
+        else {
+            setCategorySelection('전체');
+            setSearchUrl(`?page=<pageNumber>&size=${booksPerPage}`)
+        }
+
     }
 
     // 페이지 번호 클릭 함수 (currentPage 상태를 클릭된 페이지 번호로 업데이트)
@@ -151,49 +174,34 @@ export default function SearchBooksPage() {
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"
                                 >
-                                    카테고리
+                                    {categorySelection}
                                 </button>
                                 <ul
                                     className="dropdown-menu"
                                     aria-labelledby="dropdownMenuButton1"
                                 >
-                                    <li>
-                                        <a
-                                            className="dropdown-item"
-                                            href="#"
-                                        >
+                                    <li onClick={() => categoryField('전체')}>
+                                        <a className="dropdown-item">
                                             전체
                                         </a>
                                     </li>
-                                    <li>
-                                        <a
-                                            className="dropdown-item"
-                                            href="#"
-                                        >
+                                    <li onClick={() => categoryField('fe')}>
+                                        <a className="dropdown-item">
                                             Frond End
                                         </a>
                                     </li>
-                                    <li>
-                                        <a
-                                            className="dropdown-item"
-                                            href="#"
-                                        >
+                                    <li onClick={() => categoryField('be')}>
+                                        <a className="dropdown-item">
                                             Back End
                                         </a>
                                     </li>
-                                    <li>
-                                        <a
-                                            className="dropdown-item"
-                                            href="#"
-                                        >
+                                    <li onClick={() => categoryField('data')}>
+                                        <a className="dropdown-item">
                                             Data
                                         </a>
                                     </li>
-                                    <li>
-                                        <a
-                                            className="dropdown-item"
-                                            href="#"
-                                        >
+                                    <li onClick={() => categoryField('devops')}>
+                                        <a className="dropdown-item">
                                             DevOps
                                         </a>
                                     </li>
