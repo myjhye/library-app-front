@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import BookModel from "../../../models/BookModel";
 import ReturnBooks from "./ReturnBooks";
 import SpinnerLoading from "../../Utils/SpinnerLoading";
+import { Link } from "react-router-dom";
 
 export default function Carousel() {
 
@@ -38,7 +39,7 @@ export default function Carousel() {
                     copies: responseData[key].copies,
                     copiesAvailable: responseData[key].copiesAvailable,
                     category: responseData[key].category,
-                    img: responseData[key].image,
+                    img: responseData[key].img,
                 })
             }
 
@@ -115,6 +116,14 @@ export default function Carousel() {
                             <ReturnBooks book={book} />
                         </div>
                     ))}
+                </div>
+                <div className="homepage-carousel-title mt-3">
+                    <Link 
+                        className="btn btn-outline-secondary btn-lg"
+                        to="/"
+                    >
+                        더 보기
+                    </Link>
                 </div>
             </div>
         </div>
